@@ -7,6 +7,11 @@
           placeholder="Start typing to search"
           :search-input.sync="search"
           :loading="isLoading"
+          :items="itemsSearch"
+          item-text="title"
+          item-value="id"
+          v-model="selectedSearch"
+          return-object
         >
         </v-autocomplete>
       </v-col>
@@ -182,14 +187,17 @@ export default {
       ],
       search: null,
       isLoading: false,
+      itemsSearch: [],
+      selectedSearch: null,
     }
   },
   computed: {
     filteredProducts() {
       if (this.categoryId) {
         return this.products.filter((s) => s.categoryId == this.categoryId)
+      } else if (this.selectedSearch) {
+        return this.products.filter((s) => s.title == this.selectedSearch.title)
       }
-
       return this.products
     },
   },
@@ -198,7 +206,10 @@ export default {
       this.isLoading = true
 
       setTimeout(() => {
-        this.isLoading = false
+        this.itemsSearch = this.products.filter((e) => {
+          this.isLoading = false
+          return e.title
+        })
       }, 1000)
     },
   },
